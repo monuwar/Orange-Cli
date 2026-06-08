@@ -1,7 +1,7 @@
 {
   "name": "pr",
   "version": "1.0.0",
-  "main": "pr.js",
+  "main": "bot.js",
   "dependencies": {
     "axios": "^1.6.0",
     "cheerio": "^1.0.0",
