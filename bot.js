@@ -200,7 +200,7 @@ if (isMainThread) {
                     { text: "Target Range Notification", style: "success", icon_custom_emoji_id: "5458603043203327669" }
                 ]
             ],
-            resize_keyboard: true, is_persistent: true
+            resize_keyboard: true, is_persistent: false
         }
     };
 
