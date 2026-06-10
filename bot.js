@@ -224,10 +224,15 @@ if (isMainThread) {
 
     bot.start((ctx) => {
         saveUser(ctx.from);
-        let msg = `Hello! Welcome back. I'm currently tracking live traffic for you.\n\n`;
-        msg += `<b><i><a href="https://t.me/imonuwar">Developer</a></i></b>`;
-        ctx.replyWithHTML(msg, mainKeyboard);
-    });
+        let msg = `Hello! Welcome. I'm currently tracking live traffic for you.\n\n`;
+        ctx.replyWithHTML(msg, {
+    reply_markup: {
+        ...mainKeyboard.reply_markup,
+        inline_keyboard: [[
+            { text: `${emj('5229027828527309057','⭐')} Contact Developer`, url: 'https://t.me/imonuwar', style: 'danger' }
+        ]]
+    }
+});
 
     bot.hears('Top 20 Range (30M)', async (ctx) => { delete userStates[ctx.from.id]; ctx.replyWithHTML(await getRanking(20, 30)); });
     bot.hears('Top 20 Range (1H)', async (ctx) => { delete userStates[ctx.from.id]; ctx.replyWithHTML(await getRanking(20, 60)); });
