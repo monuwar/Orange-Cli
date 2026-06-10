@@ -271,7 +271,7 @@ if (isMainThread) {
         console.error(`[Bot] Polling/Handler Error:`, err.message);
     });
     // ────────────────────────────────────────────────────────────────────────
-
+}
     bot.launch();
 
 } else {
