@@ -14,14 +14,14 @@ const lastNotifiedTime = {};
 
 const emj = (id, fallback) => `<tg-emoji emoji-id="${id}">${fallback}</tg-emoji>`;
 
-// ─── FIX #1: Global crash protection ──────────────────────────────────────────
+
 process.on('uncaughtException', (err) => {
     console.error(`[FATAL] Uncaught Exception:`, err.message);
 });
 process.on('unhandledRejection', (reason) => {
     console.error(`[FATAL] Unhandled Rejection:`, reason);
 });
-// ──────────────────────────────────────────────────────────────────────────────
+
 
 if (isMainThread) {
     const bot = new Telegraf(config.BOT_TOKEN);
@@ -56,7 +56,7 @@ if (isMainThread) {
 
     const chunks = countryChunks(config.COUNTRIES, 3);
 
-    // ─── FIX #2: Worker message handler extracted (reused on restart) ──────────
+    
     function attachWorkerHandlers(worker, index) {
         worker.on('message', (msg) => {
             if (msg.type === 'data') {
@@ -82,11 +82,11 @@ if (isMainThread) {
                                             alertMsg += `${emj('5447410659077661506', '🌍')} <b>Source:</b> <code>${msg.cli}</code> (${msg.country})\n`;
                                             alertMsg += `<code>━━━━━━━━━━━━━━━━━━━━━━━━━━</code>\n`;
                                             alertMsg += `${emj('5258474669769497337', '⏹')} <b>Stop alert:</b> /stop_${sub.target_country.replace(/\s+/g, '_').toLowerCase()}_${sub.monitor_query.replace(/\s+/g, '_').toLowerCase()}`;
-                                            // ─── FIX #3: sendMessage এ .catch() যোগ ─────────────────────
+                                            
                                             bot.telegram.sendMessage(sub.chatId, alertMsg, { parse_mode: 'HTML' }).catch((e) => {
                                                 console.error(`[Bot] Alert send failed to ${sub.chatId}:`, e.message);
                                             });
-                                            // ────────────────────────────────────────────────────────────
+                                            
                                         }
                                     }
                                 });
@@ -96,17 +96,17 @@ if (isMainThread) {
                 });
             } else if (msg.type === 'cycle_done') {
                 workerFinishedCount++;
-                // ─── FIX #4: hardcoded 3 এর বদলে chunks.length ──────────────
+                
                 if (workerFinishedCount === chunks.length) {
                     let totalDur = ((Date.now() - cycleStartTime) / 1000).toFixed(0);
                     console.log(`[System] FULL Cycle Completed in ${Math.floor(totalDur/60)}m ${totalDur%60}s.`);
                     workerFinishedCount = 0; cycleStartTime = Date.now();
                 }
-                // ────────────────────────────────────────────────────────────
+                
             }
         });
 
-        // ─── FIX #5: Worker error ও exit হ্যান্ডেল + auto-restart ──────────
+        
         worker.on('error', (err) => {
             console.error(`[Worker ${index + 1}] Error: ${err.message}. Restarting in 10s...`);
         });
@@ -121,7 +121,7 @@ if (isMainThread) {
                 }, 10000);
             }
         });
-        // ────────────────────────────────────────────────────────────────────
+        
     }
 
     async function startWorkers() {
@@ -189,12 +189,12 @@ if (isMainThread) {
         reply_markup: {
             keyboard: [
                 [
-                    { text: "Top 20 Range (30M)", style: "success", icon_custom_emoji_id: "5440670060093922400" },
-                    { text: "Top 20 Range (1H)", style: "success", icon_custom_emoji_id: "6221840983928085928" }
+                    { text: "Top 20 Range (30M)", style: "primary", icon_custom_emoji_id: "5440670060093922400" },
+                    { text: "Top 20 Range (1H)", style: "primary", icon_custom_emoji_id: "6221840983928085928" }
                 ],
                 [
-                    { text: "Top 50 Range", style: "primary", icon_custom_emoji_id: "6003677145170186714" },
-                    { text: "Country Prefix", style: "primary", icon_custom_emoji_id: "5231012545799666522" }
+                    { text: "Top 50 Range", style: "success", icon_custom_emoji_id: "6003677145170186714" },
+                    { text: "Country Prefix", style: "success", icon_custom_emoji_id: "5231012545799666522" }
                 ],
                 [
                     { text: "Target Range Notification", style: "danger", icon_custom_emoji_id: "5458603043203327669" }
@@ -261,11 +261,11 @@ if (isMainThread) {
         }
     });
 
-    // ─── FIX #6: Bot polling error handler — crash ঠেকাবে ──────────────────
+    
     bot.catch((err, ctx) => {
         console.error(`[Bot] Polling/Handler Error:`, err.message);
     });
-    // ────────────────────────────────────────────────────────────────────────
+    
 
     bot.launch();
 
@@ -274,14 +274,14 @@ if (isMainThread) {
 
     function parseToMs(text) { let m = text.match(/(\d+)\s+(second|minute|hour)/); if (!m) return 0; let val = parseInt(m[1]); if (m[2] === 'second') return val * 1000; if (m[2] === 'minute') return val * 60000; return val * 3600000; }
 
-    // ─── FIX #7: Retry with exponential backoff ──────────────────────────────
+    
     async function axiosWithRetry(url, data, headers, retries = 4) {
-        const delays = [3000, 8000, 15000, 30000]; // প্রতি retry তে বেশি অপেক্ষা
+        const delays = [3000, 8000, 15000, 30000];
         for (let attempt = 0; attempt <= retries; attempt++) {
             try {
                 const response = await axios.post(url, data, {
                     headers,
-                    timeout: 20000, // 15s থেকে বাড়িয়ে 20s
+                    timeout: 20000,
                 });
                 return response;
             } catch (err) {
@@ -291,12 +291,12 @@ if (isMainThread) {
                     console.log(`[Worker ${workerId}] ${isTimeout ? 'TIMEOUT' : 'ERROR'} — Retry ${attempt + 1}/${retries} in ${waitMs/1000}s...`);
                     await new Promise(r => setTimeout(r, waitMs));
                 } else {
-                    throw err; // সব retry শেষ, error ছুঁড়ে দাও
+                    throw err;
                 }
             }
         }
     }
-    // ────────────────────────────────────────────────────────────────────────
+    
 
     async function runWorker() {
         while (true) {
@@ -305,13 +305,13 @@ if (isMainThread) {
             const apiHeaders = { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8', 'cookie': session.COOKIE, 'x-csrf-token': session.CSRF_TOKEN, 'x-requested-with': 'XMLHttpRequest', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' };
             for (const country of countries) {
                 try {
-                    // ─── FIX #7 ব্যবহার: axiosWithRetry দিয়ে call ───────────
+                    
                     const response = await axiosWithRetry(
                         'https://www.orangecarrier.com/services/cli/access/get',
                         qs.stringify({ q: country }),
                         apiHeaders
                     );
-                    // ─────────────────────────────────────────────────────────
+                    
                     if (response.data.toLowerCase().includes('no result')) { console.log(`[Worker ${workerId}] SKIP: ${country}`); continue; }
                     const $ = cheerio.load(`<table>${response.data}</table>`);
                     let taken = 0;
@@ -331,7 +331,7 @@ if (isMainThread) {
                     console.log(`[Worker ${workerId}] SUCCESS: ${country} (${taken} taken)`);
                     await new Promise(r => setTimeout(r, 400));
                 } catch (err) { 
-                    // সব retry শেষেও fail হলে লগ করো এবং পরের দেশে যাও
+                    
                     console.log(`[Worker ${workerId}] FAILED after retries: ${country} — ${err.message}`);
                 }
             }
