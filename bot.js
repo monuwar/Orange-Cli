@@ -189,15 +189,15 @@ if (isMainThread) {
         reply_markup: {
             keyboard: [
                 [
-                    { text: "Top 20 Range (30M)", style: "primary", icon_custom_emoji_id: "5440670060093922400" },
+                    { text: "Top 20 Range (30M)", style: "success", icon_custom_emoji_id: "5440670060093922400" },
                     { text: "Top 20 Range (1H)", style: "success", icon_custom_emoji_id: "6221840983928085928" }
                 ],
                 [
-                    { text: "Top 50 Range", style: "danger", icon_custom_emoji_id: "6222203784110546425" },
-                    { text: "Country Prefix", style: "danger", icon_custom_emoji_id: "5231012545799666522" }
+                    { text: "Top 50 Range", style: "primary", icon_custom_emoji_id: "6003677145170186714" },
+                    { text: "Country Prefix", style: "primary", icon_custom_emoji_id: "5231012545799666522" }
                 ],
                 [
-                    { text: "Target Range Notification", style: "success", icon_custom_emoji_id: "5458603043203327669" }
+                    { text: "Target Range Notification", style: "danger", icon_custom_emoji_id: "5458603043203327669" }
                 ]
             ],
             resize_keyboard: true, is_persistent: false
