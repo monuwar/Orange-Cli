@@ -189,7 +189,7 @@ if (isMainThread) {
         reply_markup: {
             keyboard: [
                 [
-                    { text: "Top 20 Range (30M)", style: "primary", icon_custom_emoji_id: "6221943272869207790" },
+                    { text: "Top 20 Range (30M)", style: "primary", icon_custom_emoji_id: "5440670060093922400" },
                     { text: "Top 20 Range (1H)", style: "success", icon_custom_emoji_id: "6221840983928085928" }
                 ],
                 [
